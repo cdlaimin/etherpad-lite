@@ -39,8 +39,8 @@ either Abiword or Libreoffice via setting a build variable.
 For installing Abiword, set the `INSTALL_ABIWORD` build variable to any value.
 
 Also, you will need to configure the path to the abiword executable
-via setting the `abiword` property in `<BASEDIR>/settings.json.docker` to 
-`/usr/bin/abiword` or via setting the environment variable  `ABIWORD` to 
+via setting the `abiword` property in `<BASEDIR>/settings.json.docker` to
+`/usr/bin/abiword` or via setting the environment variable  `ABIWORD` to
 `/usr/bin/abiword`.
 
 #### Via Libreoffice
@@ -49,8 +49,8 @@ For installing Libreoffice instead, set the `INSTALL_SOFFICE` build variable
 to any value.
 
 Also, you will need to configure the path to the libreoffice executable
-via setting the `soffice` property in `<BASEDIR>/settings.json.docker` to 
-`/usr/bin/soffice` or via setting the environment variable  `SOFFICE` to 
+via setting the `soffice` property in `<BASEDIR>/settings.json.docker` to
+`/usr/bin/soffice` or via setting the environment variable  `SOFFICE` to
 `/usr/bin/soffice`.
 
 ### Examples
@@ -157,15 +157,15 @@ If your database needs additional settings, you will have to use a personalized 
 You can use the UI skin variants builder at `/p/test#skinvariantsbuilder`
 
 For the colibris skin only, you can choose how to render the three main containers:
-  * toolbar (top menu with icons)
-  * editor (containing the text of the pad)
-  * background (area outside of editor, mostly visible when using page style)
+* toolbar (top menu with icons)
+* editor (containing the text of the pad)
+* background (area outside of editor, mostly visible when using page style)
 
 For each of the 3 containers you can choose 4 color combinations:
-   * super-light
-   * light
-   * dark
-   * super-dark
+* super-light
+* light
+* dark
+* super-dark
 
 For the editor container, you can also make it full width by adding `full-width-editor` variant (by default editor is rendered as a page, with a max-width of 900px).
 
@@ -186,7 +186,7 @@ For the editor container, you can also make it full width by adding `full-width-
 ### Advanced
 
 | Variable                          | Description                                                                                                                                                                                            | Default               |
-| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------    |
+|-----------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------|
 | `COOKIE_SAME_SITE`                | Value of the SameSite cookie property.                                                                                                                                                                 | `"Lax"`               |
 | `COOKIE_SESSION_LIFETIME`         | How long (ms) a user can be away before they must log in again.                                                                                                                                        | `864000000` (10 days) |
 | `COOKIE_SESSION_REFRESH_INTERVAL` | How often (ms) to write the latest cookie expiration time.                                                                                                                                             | `86400000` (1 day)    |
@@ -204,7 +204,6 @@ For the editor container, you can also make it full width by adding `full-width-
 | `MAX_AGE`                         | How long may clients use served javascript code (in seconds)? Not setting this may cause problems during deployment. Set to 0 to disable caching.                                                      | `21600` (6 hours)     |
 | `ABIWORD`                         | Absolute path to the Abiword executable. Abiword is needed to get advanced import/export features of pads. Setting it to null disables Abiword and will only allow plain text and HTML import/exports. | `null`                |
 | `SOFFICE`                         | This is the absolute path to the soffice executable. LibreOffice can be used in lieu of Abiword to export pads. Setting it to null disables LibreOffice exporting.                                     | `null`                |
-| `TIDY_HTML`                       | Path to the Tidy executable. Tidy is used to improve the quality of exported pads. Setting it to null disables Tidy.                                                                                   | `null`                |
 | `ALLOW_UNKNOWN_FILE_ENDS`         | Allow import of file types other than the supported ones: txt, doc, docx, rtf, odt, html & htm                                                                                                         | `true`                |
 | `REQUIRE_AUTHENTICATION`          | This setting is used if you require authentication of all users. Note: "/admin" always requires authentication.                                                                                        | `false`               |
 | `REQUIRE_AUTHORIZATION`           | Require authorization by a module, or a user with is_admin set, see below.                                                                                                                             | `false`               |
@@ -214,11 +213,29 @@ For the editor container, you can also make it full width by adding `full-width-
 | `FOCUS_LINE_PERCENTAGE_ARROW_UP`  | Percentage of viewport height to be additionally scrolled when user presses arrow up in the line of the top of the viewport. Set to 0 to let the scroll to be handled as default by Etherpad           | `0`                   |
 | `FOCUS_LINE_DURATION`             | Time (in milliseconds) used to animate the scroll transition. Set to 0 to disable animation                                                                                                            | `0`                   |
 | `FOCUS_LINE_CARET_SCROLL`         | Flag to control if it should scroll when user places the caret in the last line of the viewport                                                                                                        | `false`               |
-| `SOCKETIO_MAX_HTTP_BUFFER_SIZE`   | The maximum size (in bytes) of a single message accepted via Socket.IO. If a client sends a larger message, its connection gets closed to prevent DoS (memory exhaustion) attacks.                     | `10000`               |
+| `SOCKETIO_MAX_HTTP_BUFFER_SIZE`   | The maximum size (in bytes) of a single message accepted via Socket.IO. If a client sends a larger message, its connection gets closed to prevent DoS (memory exhaustion) attacks.                     | `50000`               |
 | `LOAD_TEST`                       | Allow Load Testing tools to hit the Etherpad Instance. WARNING: this will disable security on the instance.                                                                                            | `false`               |
 | `DUMP_ON_UNCLEAN_EXIT`            | Enable dumping objects preventing a clean exit of Node.js. WARNING: this has a significant performance impact.                                                                                         | `false`               |
 | `EXPOSE_VERSION`                  | Expose Etherpad version in the web interface and in the Server http header. Do not enable on production machines.                                                                                      | `false`               |
 
+### Add plugin configurations
+
+It is possible to add arbitrary configurations for plugins by setting the `EP__PLUGIN__<PLUGIN_NAME>__<CONFIG_NAME>` environment variable. It is important to separate paths with a double underscore `__`.
+
+For example, to configure the `ep_comments` plugin to use the `comments` database, you can set the following environment variables:
+
+The original config looks like this:
+```json
+"ep_comments_page": {
+  "highlightSelectedText": true
+},
+```
+We have two paths ep_comments_page and highlightSelectedText, so we need to set the following environment variable:
+
+
+```yaml
+EP__ep_comments_page__highlightSelectedText=true
+```
 
 ### Examples
 
@@ -249,9 +266,66 @@ docker run -d \
 
 Run a test instance running DirtyDB on a persistent volume:
 
-```
+```shell
 docker run -d \
 	-v etherpad_data:/opt/etherpad-lite/var \
 	-p 9001:9001 \
 	etherpad/etherpad
+```
+
+
+
+## Ready to use Docker Compose
+
+```yaml
+services:
+  app:
+    user: "0:0"
+    image: etherpad/etherpad:latest
+    tty: true
+    stdin_open: true
+    volumes:
+      - plugins:/opt/etherpad-lite/src/plugin_packages
+      - etherpad-var:/opt/etherpad-lite/var
+    depends_on:
+      - postgres
+    environment:
+      NODE_ENV: production
+      ADMIN_PASSWORD: ${DOCKER_COMPOSE_APP_ADMIN_PASSWORD:-admin}
+      DB_CHARSET: ${DOCKER_COMPOSE_APP_DB_CHARSET:-utf8mb4}
+      DB_HOST: postgres
+      DB_NAME: ${DOCKER_COMPOSE_POSTGRES_DATABASE:-etherpad}
+      DB_PASS: ${DOCKER_COMPOSE_POSTGRES_PASSWORD:-admin}
+      DB_PORT: ${DOCKER_COMPOSE_POSTGRES_PORT:-5432}
+      DB_TYPE: "postgres"
+      DB_USER: ${DOCKER_COMPOSE_POSTGRES_USER:-admin}
+      # For now, the env var DEFAULT_PAD_TEXT cannot be unset or empty; it seems to be mandatory in the latest version of etherpad
+      DEFAULT_PAD_TEXT: ${DOCKER_COMPOSE_APP_DEFAULT_PAD_TEXT:- }
+      DISABLE_IP_LOGGING: ${DOCKER_COMPOSE_APP_DISABLE_IP_LOGGING:-false}
+      SOFFICE: ${DOCKER_COMPOSE_APP_SOFFICE:-null}
+      TRUST_PROXY: ${DOCKER_COMPOSE_APP_TRUST_PROXY:-true}
+    restart: always
+    ports:
+      - "${DOCKER_COMPOSE_APP_PORT_PUBLISHED:-9001}:${DOCKER_COMPOSE_APP_PORT_TARGET:-9001}"
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: ${DOCKER_COMPOSE_POSTGRES_DATABASE:-etherpad}
+      POSTGRES_PASSWORD: ${DOCKER_COMPOSE_POSTGRES_PASSWORD:-admin}
+      POSTGRES_PORT: ${DOCKER_COMPOSE_POSTGRES_PORT:-5432}
+      POSTGRES_USER: ${DOCKER_COMPOSE_POSTGRES_USER:-admin}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    restart: always
+    # Exposing the port is not needed unless you want to access this database instance from the host.
+    # Be careful when other postgres docker container are running on the same port
+    # ports:
+    #   - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/pgdata
+
+volumes:
+  postgres_data:
+  plugins:
+  etherpad-var:
 ```
